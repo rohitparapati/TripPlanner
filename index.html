@@ -13,133 +13,179 @@
     <p>Real-time trip planning tool</p>
     <button id="back-to-join-btn" class="taskbar-button" style="display: none;">Back to Join Trip</button>
   </div>
-<!-- Background Wrapper -->
-<div class="background-wrapper">
-  <!-- Main Container -->
-  <div class="container">
-    <!-- Authentication Section -->
-    <div id="auth-section">
-      <h3>Signup/Login</h3>
-      <div>
-        <input type="text" id="signup-username" placeholder="Username">
-        <input type="email" id="signup-email" placeholder="Email">
-        <input type="password" id="signup-password" placeholder="Password">
-        <button id="signup-btn">Sign Up</button>
-      </div>
-      <div>
-        <input type="text" id="login-username" placeholder="Username">
-        <input type="password" id="login-password" placeholder="Password">
-        <button id="login-btn">Log In</button>
-      </div>
-      <p id="auth-message" style="color: green;"></p>
-    </div>
-    
-    <!-- Trip Section -->
-    <div id="trip-section" style="display: none;">
-      <h3>Join a Trip</h3>
-      <input type="text" id="trip-id" placeholder="Enter Trip ID">
-      <!-- Destination Section -->
-      <div id="destination-section" style="display: none;">
-        <select id="country">
-          <option value="">Select Country</option>
-        </select>
-        <select id="state" style="display: none;">
-          <option value="">Select State</option>
-        </select>
-      </div>
-      <button id="join-trip-btn">Join Trip</button>
-    </div>
 
-    <!-- Main Content -->
-    <div id="main-content" style="display: none;">
-      <!-- Itinerary Section -->
-      <div id="itinerary-section">
-        <h3>Itinerary</h3>
-        <ul id="itinerary-list"></ul>
-        <input type="text" id="itinerary-input" placeholder="Add item to itinerary">
-        <button id="add-item-btn">Add Item</button>
-        <div id="pinned-locations-section">
-          <h4>Pinned Locations</h4>
-          <ul id="pinned-locations-list"></ul>
+  <!-- Background Wrapper -->
+  <div class="background-wrapper">
+    <!-- Main Container -->
+    <div class="container">
+      <!-- Authentication Section -->
+      <div id="auth-section">
+        <h3>Signup/Login</h3>
+        <div>
+          <input type="text" id="signup-username" placeholder="Username">
+          <input type="email" id="signup-email" placeholder="Email">
+          <input type="password" id="signup-password" placeholder="Password">
+          <button id="signup-btn">Sign Up</button>
         </div>
+        <div>
+          <input type="text" id="login-username" placeholder="Username">
+          <input type="password" id="login-password" placeholder="Password">
+          <button id="login-btn">Log In</button>
+        </div>
+        <p id="auth-message" style="color: green;"></p>
       </div>
       
-
-      <!-- Chat Section -->
-      <div id="chat-section">
-        <h3>Chat</h3>
-        <div id="chat-window">
-          <ul id="messages"></ul>
+      <!-- Trip Section -->
+      <div id="trip-section" style="display: none;">
+        <h3>Join a Trip</h3>
+        <input type="text" id="trip-id" placeholder="Enter Trip ID">
+        <!-- Destination Section -->
+        <div id="destination-section" style="display: none;">
+          <select id="country">
+            <option value="">Select Country</option>
+          </select>
+          <select id="state" style="display: none;">
+            <option value="">Select State</option>
+          </select>
         </div>
-        <input type="text" id="chat-input" placeholder="Type your message">
-        <button id="send-chat-btn">Send</button>
+        <button id="join-trip-btn">Join Trip</button>
       </div>
 
-      <!-- Map Section -->
-      <div id="map-container">
-        <input id="map-search" class="map-search" type="text" placeholder="Search for locations..." />
-        <div id="map"></div>
+      <!-- Main Content -->
+      <div id="main-content" style="display: none;">
+        <!-- Itinerary Section -->
+        <div id="itinerary-section">
+          <h3>Itinerary</h3>
+          <ul id="itinerary-list"></ul>
+          <input type="text" id="itinerary-input" placeholder="Add item to itinerary">
+          <button id="add-item-btn">Add Item</button>
+          <div id="pinned-locations-section">
+            <h4>Pinned Locations</h4>
+            <ul id="pinned-locations-list"></ul>
+          </div>
+        </div>
+
+        <!-- Chat Section -->
+        <div id="chat-section">
+          <h3>Chat</h3>
+          <div id="chat-window">
+            <ul id="messages"></ul>
+          </div>
+          <input type="text" id="chat-input" placeholder="Type your message">
+          <button id="send-chat-btn">Send</button>
+        </div>
+
+        <!-- Map Section -->
+        <div id="map-container">
+          <input id="map-search" class="map-search" type="text" placeholder="Search for locations..." />
+          <div id="map"></div>
+        </div>
       </div>
     </div>
   </div>
-</div>
+
   <script src="/socket.io/socket.io.js"></script>
   <script src="/client.js"></script>
   <script>
     // Handle signup
-    document.getElementById('signup-btn').addEventListener('click', async () => {
-      const username = document.getElementById('signup-username').value;
-      const email = document.getElementById('signup-email').value;
-      const password = document.getElementById('signup-password').value;
-      
+    document.getElementById('signup-btn').addEventListener('click', async (event) => {
+      event.preventDefault();
+
+      const username = document.getElementById('signup-username').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value.trim();
+      const msgEl = document.getElementById('auth-message');
+
+      if (!username || !email || !password) {
+        msgEl.style.color = 'red';
+        msgEl.textContent = 'Please fill all signup fields';
+        return;
+      }
+
       const response = await fetch('/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password })
       });
-      
+
       const message = await response.text();
-      document.getElementById('auth-message').textContent = message;
+      msgEl.textContent = message;
+
       if (response.ok) {
+        msgEl.style.color = 'green';
         document.getElementById('auth-section').style.display = 'none';
         document.getElementById('trip-section').style.display = 'block';
+      } else {
+        msgEl.style.color = 'red';
       }
     });
 
-    // Handle login
-    document.getElementById('login-btn').addEventListener('click', async () => {
-      const username = document.getElementById('login-username').value;
-      const password = document.getElementById('login-password').value;
-      
-      const response = await fetch('/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-      });
-      
-      const message = await response.text();
-      document.getElementById('auth-message').textContent = message;
-      if (response.ok) {
-        document.getElementById('auth-section').style.display = 'none';
-        document.getElementById('trip-section').style.display = 'block';
+    // Handle login (fixed logic)
+    document.getElementById('login-btn').addEventListener('click', async (event) => {
+      event.preventDefault();
+
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value.trim();
+      const msgEl = document.getElementById('auth-message');
+
+      if (!username || !password) {
+        msgEl.style.color = 'red';
+        msgEl.textContent = 'Please enter username and password';
+        return;
+      }
+
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+          credentials: 'include'
+        });
+
+        const message = await response.text();
+
+        if (response.ok) {
+          msgEl.style.color = 'green';
+          msgEl.textContent = 'Login successful!';
+          document.getElementById('auth-section').style.display = 'none';
+          document.getElementById('trip-section').style.display = 'block';
+        } else {
+          msgEl.style.color = 'red';
+          msgEl.textContent = message || 'Login failed. Please try again.';
+          document.getElementById('auth-section').style.display = 'block';
+          document.getElementById('trip-section').style.display = 'none';
+          document.getElementById('main-content').style.display = 'none';
+        }
+      } catch (err) {
+        console.error('Login error:', err);
+        msgEl.style.color = 'red';
+        msgEl.textContent = 'Error logging in. Please try again.';
       }
     });
 
-    // Handle joining a trip without re-entering the username
-    document.getElementById('join-trip-btn').addEventListener('click', async () => {
+    // Handle joining a trip
+    document.getElementById('join-trip-btn').addEventListener('click', async (event) => {
+      event.preventDefault();
+
       const tripId = document.getElementById('trip-id').value.trim();
       const country = document.getElementById('country').value;
       const state = document.getElementById('state').value;
+
+      if (!tripId) {
+        alert('Please enter a Trip ID');
+        return;
+      }
 
       const response = await fetch('/join-trip', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tripId, destinationCity: state, destinationCountry: country }),
-        credentials: 'include' // Ensure cookies are sent
+        credentials: 'include'
       });
-      
+
       const message = await response.text();
       alert(message);
+
       if (response.ok) {
         document.getElementById('trip-section').style.display = 'none';
         document.getElementById('main-content').style.display = 'flex';

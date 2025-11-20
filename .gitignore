@@ -1,2 +1,13 @@
-node_modules/certificates/server.key
+# Node dependencies
+node_modules
+
+# Environment secrets
+.env
+
+# Certificates (if you add them later)
+certificates/server.key
 certificates/server.cert
+
+# Misc
+npm-debug.log*
+.DS_Store
