@@ -265,6 +265,7 @@ loginBtn.addEventListener('click', () => {
 
 
 joinTripBtn.addEventListener('click', () => {
+  resetTripUI();
   const tripId = tripIdInput.value.trim();
   const selectedCountry = countrySelect.value;
   const selectedState = stateSelect.value;
@@ -322,6 +323,30 @@ function centerMapOnLocation(country, state) {
       console.error('Geocode was not successful for the following reason: ' + status);
     }
   });
+}
+// Reset all UI pieces when switching trips
+function resetTripUI() {
+  // Clear itinerary list
+  if (itineraryList) {
+    itineraryList.innerHTML = '';
+  }
+
+  // Clear chat messages
+  if (messagesList) {
+    messagesList.innerHTML = '';
+  }
+
+  // Clear pinned locations list
+  const pinnedList = document.getElementById('pinned-locations-list');
+  if (pinnedList) {
+    pinnedList.innerHTML = '';
+  }
+
+  // Remove all markers from the map
+  if (markers && markers.length) {
+    markers.forEach(marker => marker.setMap(null));
+  }
+  markers = [];
 }
 
 // Show the main content, including the map
@@ -534,4 +559,34 @@ socket.on('centerMap', ({ lat, lng, zoom }) => {
     map.setCenter({ lat, lng });
     map.setZoom(zoom);
   }
+});
+
+// ===============================
+// RECEIVE CHAT MESSAGE
+// ===============================
+socket.on('receiveMessage', (data) => {
+  const li = document.createElement('li');
+  li.textContent = `${data.username}: ${data.message}`;
+  messagesList.appendChild(li);
+  messagesList.scrollTop = messagesList.scrollHeight;
+});
+
+// ===============================
+// RECEIVE NEW ITINERARY ITEM
+// ===============================
+socket.on('updateItinerary', (data) => {
+  const li = document.createElement('li');
+  li.textContent = data.item;
+  itineraryList.appendChild(li);
+});
+
+// ===============================
+// RECEIVE PINNED LOCATION
+// ===============================
+socket.on('locationPinned', (data) => {
+  const li = document.createElement('li');
+  li.textContent = `${data.name} (${data.lat}, ${data.lng})`;
+  document
+    .getElementById('pinned-locations-list')
+    .appendChild(li);
 });
