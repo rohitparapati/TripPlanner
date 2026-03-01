@@ -1,232 +1,568 @@
-/* Taskbar Styling */
-.header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: #2c3e50; /* Professional dark theme */
-  color: white;
-  padding: 10px 0;
-  z-index: 1000;
-  text-align: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap');
 
+:root {
+  --bg: #f3f7f5;
+  --surface: rgba(255, 255, 255, 0.9);
+  --surface-strong: #ffffff;
+  --surface-muted: #eef5f2;
+  --text: #153126;
+  --text-soft: #5c7369;
+  --border: rgba(21, 49, 38, 0.1);
+  --shadow: 0 24px 60px rgba(14, 41, 32, 0.12);
+  --shadow-soft: 0 16px 35px rgba(14, 41, 32, 0.08);
+  --primary: #0f766e;
+  --primary-strong: #0b5b55;
+  --accent: #d97706;
+  --danger: #c2410c;
+  --success: #15803d;
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
 }
 
-.header h1, .header p {
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
   margin: 0;
-  padding: 0; 
-  font-family: 'Arial', sans-serif;
-  font-weight: 600;
+  min-height: 100vh;
+  font-family: 'Manrope', sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(15, 118, 110, 0.18), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(217, 119, 6, 0.12), transparent 24%),
+    linear-gradient(180deg, #f7fbf9 0%, #eef5f1 100%);
 }
 
-/* Main Container Styling */
-.container {
-  width: 90%;
-  margin: auto;
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(rgba(7, 24, 20, 0.45), rgba(7, 24, 20, 0.18)),
+    url('bg.jpg') center/cover no-repeat;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   display: flex;
-  flex-direction: row;
-  margin-top: 70px; /* Space below the fixed header */
- 
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px 32px;
+  text-align: center;
+  color: #f8fdfb;
+  background: linear-gradient(135deg, rgba(14, 59, 53, 0.95), rgba(10, 95, 88, 0.9));
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 40px rgba(6, 31, 26, 0.28);
+}
+
+.header h1 {
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.header p {
+  margin: 0;
+  color: rgba(248, 253, 251, 0.82);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.background-wrapper {
+  position: relative;
+  min-height: calc(100vh - 92px);
+  padding: 36px 24px 48px;
+}
+
+.container {
+  width: min(1280px, 100%);
+  margin: 0 auto;
+}
+
+#auth-section,
+#trip-section,
+#main-content {
+  position: relative;
+  animation: fadeUp 0.6s ease;
+}
+
+#auth-section,
+#trip-section {
+  width: min(560px, 100%);
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: var(--radius-xl);
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+}
+
+#auth-section {
+  margin: 32px auto 0;
+}
+
+#trip-section {
+  margin: 32px auto 0;
+}
+
+#auth-section h3,
+#trip-section h3,
+#itinerary-section h3,
+#chat-section h3 {
+  margin: 0 0 20px;
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+#pinned-locations-section h4 {
+  margin: 0 0 14px;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+#auth-section > div,
+#trip-section,
+#itinerary-section,
+#chat-section,
+#map-container,
+#pinned-locations-section {
+  overflow: hidden;
+}
+
+#auth-section > div {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+input,
+select,
+.map-search {
+  width: 100%;
+  min-height: 50px;
+  padding: 0 16px;
+  border: 1px solid rgba(21, 49, 38, 0.14);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.96);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+input::placeholder {
+  color: #7a8f86;
+}
+
+input:focus,
+select:focus,
+.map-search:focus {
+  border-color: rgba(15, 118, 110, 0.65);
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+  transform: translateY(-1px);
+}
+
+button {
+  min-height: 48px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(14, 41, 32, 0.14);
+  filter: saturate(1.05);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+#signup-btn,
+#login-btn,
+#join-trip-btn,
+#add-item-btn,
+#send-chat-btn,
+.upvote-btn,
+.downvote-btn,
+.taskbar-button {
+  background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+}
+
+#signup-btn,
+#login-btn {
+  width: fit-content;
+  min-width: 120px;
+}
+
+#join-trip-btn {
+  width: 100%;
+  margin-top: 18px;
+}
+
+#add-item-btn,
+#send-chat-btn {
+  margin-top: 12px;
+}
+
+.taskbar-button {
+  position: absolute;
+  left: 24px;
+  top: 50%;
+  min-height: 42px;
+  padding: 0 16px;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow: none;
+}
+
+.taskbar-button:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+#auth-message {
+  margin: 4px 0 0;
+  font-weight: 700;
+}
+
+#destination-section {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
 }
 
 #main-content {
-  display: flex;
-  width: 100%;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 20px; /* Uniform spacing between sections */
-
+  display: grid;
+  grid-template-columns: 240px 380px minmax(620px, 1fr);
+  gap: 22px;
+  align-items: stretch;
 }
 
-/* Itinerary Section */
-#itinerary-section {
-  width: 25%; /* Balanced width for usability */
-  margin-right: 20px;
-  position: sticky;
-  top: 80px; /* Adjusted for sticky behavior with header */
+#itinerary-section,
+#chat-section,
+#map-container {
   display: flex;
-  flex-direction: column; /* Ensures vertical stacking of itinerary and pinned locations */
+  flex-direction: column;
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow-soft);
+}
+
+#itinerary-section {
+  position: sticky;
+  top: 118px;
+  gap: 16px;
+}
+
+#chat-section {
+  gap: 16px;
+  min-height: calc(100vh - 170px);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(241, 248, 245, 0.9));
+}
+
+#map-container {
+  gap: 16px;
+  min-height: calc(100vh - 170px);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(233, 244, 240, 0.92));
+}
+
+.panel-header {
+  display: grid;
+  gap: 4px;
+}
+
+.panel-header h3 {
+  margin-bottom: 0;
+}
+
+.panel-kicker {
+  margin: 0;
+  color: var(--primary);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.panel-copy {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.panel-input-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.map-toolbar {
+  display: flex;
+  align-items: center;
+}
+
+#itinerary-list,
+#pinned-locations-list,
+#messages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#itinerary-list,
+#pinned-locations-list {
+  display: grid;
+  gap: 12px;
 }
 
 #itinerary-list {
-  max-height: 250px;
+  flex: 1;
+  min-height: 0;
+  max-height: 300px;
+  padding-right: 4px;
   overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f7f9fc;
-  padding: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px; /* Add spacing below the itinerary items */
-}
-
-/* Pinned Locations Section */
-#pinned-locations-section {
-  margin-top: 0; /* Remove any extra margin */
 }
 
 #pinned-locations-list {
-  max-height: 200px;
+  max-height: 220px;
   overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f7f9fc;
-  padding: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  list-style-type: none;
+  padding-right: 4px;
 }
 
+#itinerary-list li,
 #pinned-locations-list li {
-  margin-bottom: 10px;
-  padding: 10px;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-family: 'Arial', sans-serif;
-  font-size: 14px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff, #f7fbf9);
+  box-shadow: 0 10px 22px rgba(14, 41, 32, 0.06);
+  color: var(--text);
+  font-size: 0.94rem;
 }
 
-#pinned-locations-list li:hover {
-  background-color: #f0f8ff;
-  border-color: #3498db;
+#itinerary-input,
+#chat-input,
+#trip-id {
+  margin-top: 0;
 }
 
-/* Chat Section */
+.upvote-btn,
+.downvote-btn {
+  min-height: 38px;
+  margin-top: 10px;
+  margin-right: 8px;
+  padding: 0 14px;
+  font-size: 0.86rem;
+}
+
+.downvote-btn {
+  background: linear-gradient(135deg, #dc2626, var(--danger));
+}
+
 #chat-section {
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
 }
 
 #chat-window {
-  height: 450px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  flex: 1;
+  min-height: 0;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(241, 248, 245, 0.95));
   overflow-y: auto;
-  padding: 15px;
-  background-color: #ffffff;
-  margin-top: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Map Container Styling */
+#messages {
+  display: grid;
+  gap: 12px;
+}
+
+#messages li {
+  width: fit-content;
+  max-width: 85%;
+  padding: 13px 15px;
+  border-radius: 16px 16px 16px 6px;
+  background: #e8f5f1;
+  color: var(--text);
+  box-shadow: 0 8px 20px rgba(14, 41, 32, 0.06);
+  line-height: 1.45;
+}
+
+#messages li strong {
+  color: var(--primary-strong);
+}
+
 #map-container {
-  width: 50%; /* Professional proportion for layout */
+  position: relative;
+}
+
+.map-search {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 10px 24px rgba(14, 41, 32, 0.08);
 }
 
 #map {
-  width: 100%; 
-  height: 500px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  border: 1px solid rgba(21, 49, 38, 0.12);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+    0 20px 40px rgba(14, 41, 32, 0.12);
 }
 
-/* Search Bar Styling Above the Map */
-.map-search {
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f7f9fc;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  font-family: 'Arial', sans-serif;
+#itinerary-list::-webkit-scrollbar,
+#pinned-locations-list::-webkit-scrollbar,
+#chat-window::-webkit-scrollbar {
+  width: 10px;
 }
 
-/* Itinerary Items Styling */
-#itinerary-list {
-  list-style-type: none;
-  padding: 0;
+#itinerary-list::-webkit-scrollbar-thumb,
+#pinned-locations-list::-webkit-scrollbar-thumb,
+#chat-window::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(15, 118, 110, 0.28);
 }
 
-#itinerary-list li {
-  margin-bottom: 10px;
-  padding: 10px;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-family: 'Arial', sans-serif;
-  font-size: 14px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-#itinerary-list li:hover {
-  background-color: #f0f8ff;
-  border-color: #3498db;
+@media (max-width: 1100px) {
+  #main-content {
+    grid-template-columns: minmax(320px, 1fr) minmax(300px, 340px);
+    grid-template-areas:
+      "map map"
+      "chat itinerary";
+  }
+
+  #itinerary-section {
+    grid-area: itinerary;
+    position: static;
+    min-height: 560px;
+  }
+
+  #chat-section {
+    grid-area: chat;
+    min-height: 560px;
+  }
+
+  #map-container {
+    grid-area: map;
+    min-height: 620px;
+  }
 }
 
-/* Upvote/Downvote Button Styling */
-.upvote-btn, .downvote-btn {
-  margin-left: 10px;
-  padding: 5px 10px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  font-family: 'Arial', sans-serif;
-  font-size: 12px;
-  transition: background-color 0.3s ease, opacity 0.3s ease;
-}
+@media (max-width: 720px) {
+  .header {
+    padding: 18px 18px 16px;
+  }
 
-.downvote-btn {
-  background-color: #e74c3c;
-}
+  .header h1 {
+    font-size: 1.55rem;
+  }
 
-.upvote-btn:hover, .downvote-btn:hover {
-  background-color: #2980b9;
-  opacity: 0.9;
-}
+  .header p {
+    display: none;
+  }
 
-.downvote-btn:hover {
-  background-color: #c0392b;
-}
+  .taskbar-button {
+    position: static;
+    transform: none;
+    margin-right: auto;
+  }
 
-/* Join Trip Button Styling */
-#join-trip-btn {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background-color: #27ae60;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  font-family: 'Arial', sans-serif;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
-}
+  .background-wrapper {
+    padding: 18px 14px 32px;
+  }
 
-#join-trip-btn:hover {
-  background-color: #1e8449;
-}
+  #main-content {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "map"
+      "chat"
+      "itinerary";
+  }
 
-.background-wrapper {
-  background-image: url('bg.jpg'); /* Replace with your image path */
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  padding-top: 20px; /* Space below the fixed header */
-  min-height: 100vh; /* Ensures the background extends to the bottom of the page */
-}
+  #auth-section,
+  #trip-section,
+  #itinerary-section,
+  #chat-section,
+  #map-container {
+    padding: 20px;
+    border-radius: 22px;
+  }
 
-/* Taskbar Button Styling */
-.taskbar-button {
-  position: absolute; /* Place it inside the header */
-  left: 20px; /* Adjust position from the left edge */
-  top: 50%;
-  transform: translateY(-50%);
-  padding: 10px 15px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-family: 'Arial', sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  #auth-section > div {
+    padding: 14px;
+  }
+
+  #chat-window,
+  #map {
+    min-height: 380px;
+  }
+
+  #itinerary-list,
+  #pinned-locations-list {
+    max-height: none;
+  }
+
+  #chat-section,
+  #map-container,
+  #itinerary-section {
+    min-height: auto;
+  }
 }

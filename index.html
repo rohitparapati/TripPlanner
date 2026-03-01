@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <title>Interactive Group Travel Planner</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBM8o-3sJaWx6NqIoVX65qQWniSqf2H7zc&libraries=places" async defer></script>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 </head>
 <body>
   <!-- Taskbar/Header -->
@@ -34,11 +35,12 @@
         </div>
         <p id="auth-message" style="color: green;"></p>
       </div>
-      
+
       <!-- Trip Section -->
       <div id="trip-section" style="display: none;">
         <h3>Join a Trip</h3>
         <input type="text" id="trip-id" placeholder="Enter Trip ID">
+
         <!-- Destination Section -->
         <div id="destination-section" style="display: none;">
           <select id="country">
@@ -48,6 +50,7 @@
             <option value="">Select State</option>
           </select>
         </div>
+
         <button id="join-trip-btn">Join Trip</button>
       </div>
 
@@ -55,10 +58,16 @@
       <div id="main-content" style="display: none;">
         <!-- Itinerary Section -->
         <div id="itinerary-section">
-          <h3>Itinerary</h3>
+          <div class="panel-header">
+            <p class="panel-kicker">Trip Plan</p>
+            <h3>Itinerary</h3>
+            <p class="panel-copy">Keep the trip agenda focused, vote on stops, and review saved places in one rail.</p>
+          </div>
           <ul id="itinerary-list"></ul>
-          <input type="text" id="itinerary-input" placeholder="Add item to itinerary">
-          <button id="add-item-btn">Add Item</button>
+          <div class="panel-input-row">
+            <input type="text" id="itinerary-input" placeholder="Add item to itinerary">
+            <button id="add-item-btn">Add Item</button>
+          </div>
           <div id="pinned-locations-section">
             <h4>Pinned Locations</h4>
             <ul id="pinned-locations-list"></ul>
@@ -67,17 +76,30 @@
 
         <!-- Chat Section -->
         <div id="chat-section">
-          <h3>Chat</h3>
+          <div class="panel-header">
+            <p class="panel-kicker">Team Chat</p>
+            <h3>Conversation</h3>
+            <p class="panel-copy">Use chat for quick decisions while the map and itinerary stay visible beside it.</p>
+          </div>
           <div id="chat-window">
             <ul id="messages"></ul>
           </div>
-          <input type="text" id="chat-input" placeholder="Type your message">
-          <button id="send-chat-btn">Send</button>
+          <div class="panel-input-row">
+            <input type="text" id="chat-input" placeholder="Type your message">
+            <button id="send-chat-btn">Send</button>
+          </div>
         </div>
 
         <!-- Map Section -->
-        <div id="map-container">
-          <input id="map-search" class="map-search" type="text" placeholder="Search for locations..." />
+        <div id="map-container" data-maptiler-key="IBs1gGpHJz3cjKAnt6aa">
+          <div class="panel-header panel-header-map">
+            <p class="panel-kicker">Map Explorer</p>
+            <h3>Destination Board</h3>
+            <p class="panel-copy">Search locations, review the trip area, and pin stops directly from the main map.</p>
+          </div>
+          <div class="map-toolbar">
+            <input id="map-search" class="map-search" type="text" placeholder="Search for locations..." />
+          </div>
           <div id="map"></div>
         </div>
       </div>
@@ -86,111 +108,5 @@
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="/client.js"></script>
-  <script>
-    // Handle signup
-    document.getElementById('signup-btn').addEventListener('click', async (event) => {
-      event.preventDefault();
-
-      const username = document.getElementById('signup-username').value.trim();
-      const email = document.getElementById('signup-email').value.trim();
-      const password = document.getElementById('signup-password').value.trim();
-      const msgEl = document.getElementById('auth-message');
-
-      if (!username || !email || !password) {
-        msgEl.style.color = 'red';
-        msgEl.textContent = 'Please fill all signup fields';
-        return;
-      }
-
-      const response = await fetch('/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password })
-      });
-
-      const message = await response.text();
-      msgEl.textContent = message;
-
-      if (response.ok) {
-        msgEl.style.color = 'green';
-        document.getElementById('auth-section').style.display = 'none';
-        document.getElementById('trip-section').style.display = 'block';
-      } else {
-        msgEl.style.color = 'red';
-      }
-    });
-
-    // Handle login (fixed logic)
-    document.getElementById('login-btn').addEventListener('click', async (event) => {
-      event.preventDefault();
-
-      const username = document.getElementById('login-username').value.trim();
-      const password = document.getElementById('login-password').value.trim();
-      const msgEl = document.getElementById('auth-message');
-
-      if (!username || !password) {
-        msgEl.style.color = 'red';
-        msgEl.textContent = 'Please enter username and password';
-        return;
-      }
-
-      try {
-        const response = await fetch('/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password }),
-          credentials: 'include'
-        });
-
-        const message = await response.text();
-
-        if (response.ok) {
-          msgEl.style.color = 'green';
-          msgEl.textContent = 'Login successful!';
-          document.getElementById('auth-section').style.display = 'none';
-          document.getElementById('trip-section').style.display = 'block';
-        } else {
-          msgEl.style.color = 'red';
-          msgEl.textContent = message || 'Login failed. Please try again.';
-          document.getElementById('auth-section').style.display = 'block';
-          document.getElementById('trip-section').style.display = 'none';
-          document.getElementById('main-content').style.display = 'none';
-        }
-      } catch (err) {
-        console.error('Login error:', err);
-        msgEl.style.color = 'red';
-        msgEl.textContent = 'Error logging in. Please try again.';
-      }
-    });
-
-    // Handle joining a trip
-    document.getElementById('join-trip-btn').addEventListener('click', async (event) => {
-      event.preventDefault();
-
-      const tripId = document.getElementById('trip-id').value.trim();
-      const country = document.getElementById('country').value;
-      const state = document.getElementById('state').value;
-
-      if (!tripId) {
-        alert('Please enter a Trip ID');
-        return;
-      }
-
-      const response = await fetch('/join-trip', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tripId, destinationCity: state, destinationCountry: country }),
-        credentials: 'include'
-      });
-
-      const message = await response.text();
-      alert(message);
-
-      if (response.ok) {
-        document.getElementById('trip-section').style.display = 'none';
-        document.getElementById('main-content').style.display = 'flex';
-      }
-    });
-  </script>
 </body>
 </html>
