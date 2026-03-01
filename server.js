@@ -40,8 +40,7 @@ const sessionMiddleware = session({
   cookie: {
     secure: false,           // set true only with HTTPS
     httpOnly: true,
-    sameSite: 'lax',
-    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+    sameSite: 'lax'
   }
 });
 

@@ -705,3 +705,18 @@ window.addEventListener('DOMContentLoaded', async () => {
     showAuth();
   }
 });
+
+window.addEventListener('load', async () => {
+  try {
+    await fetch('/logout', {
+      method: 'POST',
+      credentials: 'include'
+    });
+  } catch (err) {
+    console.error('Logout on startup failed:', err);
+  }
+
+  currentUsername = null;
+  currentTripId = null;
+  showAuth();
+});
